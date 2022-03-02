@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendation Model</title>
+</head>
+<body>
+    <h3>Input</h3>
+    <input id="input" name="input" />
+    <button type="button" name="submit" id="submit">Submit</button>
+    <br>
+    <h3>Output</h3>
+    <textarea id="output" cols="100" rows="10"></textarea>
+
+
+
+</body>
+<script>
+    const url = 'http://localhost:5000/predict';
+
+    const inputSelector = '#input';
+    const buttonSelector = '#submit';
+    const txtAreaSelector = '#output';
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const input = document.querySelector(inputSelector);
+        const output = document.querySelector(txtAreaSelector);
+
+        const btn = document.querySelector(buttonSelector);
+
+        btn.onclick = async (e) => {
+            const val = input.value;
+            const response = await fetch(`${url}/${val}`);
+
+            const res = await response.json();
+            output.value = JSON.stringify(res.data, null, 4);
+        }
+
+    });
+</script>
+</html>
