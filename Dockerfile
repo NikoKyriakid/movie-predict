@@ -4,7 +4,7 @@ FROM continuumio/anaconda3
 WORKDIR /src
 
 COPY requirements.txt requirements.txt
-# RUN pip3 install -r requirements.txt
+
 RUN conda install --file requirements.txt -c conda-forge
 RUN conda install jupyter -y --quiet
 RUN mkdir -p /src/notebooks
