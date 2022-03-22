@@ -1,33 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Recommendation Model</title>
+    <title>Movie Recommendation System</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
+    <link href="./css/main.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://www.google.com/jsapi"></script>
+
 </head>
 <body>
-    <h3>Input</h3>
-    <input id="input" name="input" />
-    <button type="button" name="submit" id="submit">Submit</button>
-    <br>
-    <h3>Output</h3>
-    <textarea id="output" cols="100" rows="10"></textarea>
 
+    <main>
+        <header class="py-3 mb-3 border-bottom" style="user-select: auto;">
+            <div class="container-fluid d-grid gap-3 align-items-center"
+                style="grid-template-columns: 1fr 2fr; user-select: auto;">
 
+                <div class="d-flex align-items-center" style="user-select: auto;">
+                    <form class="w-100 me-3" style="user-select: auto;">
+                        <div class="input-group">
+                            <input type="text" id="myAutocomplete" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" autocomplete="off"/>
+                            <button type="button" id="search-button" class="btn btn-outline-primary">search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </header>
+
+        <div class="container parent-container">
+            <div class="row">
+                <h1>Recommendation List</h1>
+            </div>
+            <div class="container" id="movie-list"></div>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="./js/autocomplete.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="./js/movieCard.js" type="text/javascript"></script>
 
 </body>
 <script>
+
+    fetch('./js/movieList.json').then(async res => {
+
+        const json = await res.json();
+
+        const datasrc = json.map(m => {
+            return {
+                label: m,
+                value: encodeURIComponent(m)
+            }
+        });
+
+        const ac = new Autocomplete(document.getElementById('myAutocomplete'), {
+            data: datasrc,
+            maximumItems: 10,
+            threshold: 2,
+            highlightTyped: true,
+        });
+
+    });
+
     const url = 'http://localhost:5000/predict';
 
-    const inputSelector = '#input';
-    const buttonSelector = '#submit';
+    const inputSelector = '#myAutocomplete';
+    const buttonSelector = '#search-button';
     const txtAreaSelector = '#output';
+
 
     window.addEventListener('DOMContentLoaded', (event) => {
         const input = document.querySelector(inputSelector);
         const output = document.querySelector(txtAreaSelector);
-
+        const $movieList = document.querySelector('#movie-list');
         const btn = document.querySelector(buttonSelector);
 
         btn.onclick = async (e) => {
@@ -35,9 +88,14 @@
             const response = await fetch(`${url}/${val}`);
 
             const res = await response.json();
-            output.value = JSON.stringify(res.data, null, 4);
+
+            const html = res.data.map(m => generateMovieCard(m));
+
+            $movieList.innerHTML = html.join('');
+
         }
 
     });
 </script>
+
 </html>

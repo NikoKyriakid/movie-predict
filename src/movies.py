@@ -140,6 +140,7 @@ indices = pd.Series(smd.index, index=smd['title'])
 def get_recommendations(title):
     idx = indices[title]
     sim_scores = list(enumerate(cosine_sim[idx]))
+    # TODO fix the fact sim_scores have nested arrays in the tuples so instead of having a list of (x, y) we have (x, [])
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
     sim_scores = sim_scores[1:31]
     movie_indices = [i[0] for i in sim_scores]
